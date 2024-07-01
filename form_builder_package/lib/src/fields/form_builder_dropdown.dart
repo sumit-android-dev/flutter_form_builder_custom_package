@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -259,7 +260,7 @@ class FormBuilderDropdown<T> extends FormBuilderFieldDecoration<T> {
             final state = field as _FormBuilderDropdownState<T>;
 
             final hasValue = items.map((e) => e.value).contains(field.value);
-            return DropdownButtonFormField<T>(
+            return DropdownButtonFormField2<T>(
               isExpanded: isExpanded,
               decoration: state.decoration,
               items: items,
@@ -272,24 +273,49 @@ class FormBuilderDropdown<T> extends FormBuilderFieldDecoration<T> {
                           (dropDownItem) => dropDownItem.value == field.value)
                       .child
                   : disabledHint,
-              elevation: elevation,
-              iconSize: iconSize,
-              icon: icon,
-              iconDisabledColor: iconDisabledColor,
-              iconEnabledColor: iconEnabledColor,
+              //elevation: elevation,
+              //iconSize: iconSize,
+              //icon: icon,
+              //iconDisabledColor: iconDisabledColor,
+              //iconEnabledColor: iconEnabledColor,
               onChanged:
                   state.enabled ? (T? value) => state.didChange(value) : null,
-              onTap: onTap,
+              //onTap: onTap,
               focusNode: state.effectiveFocusNode,
               autofocus: autofocus,
-              dropdownColor: dropdownColor,
-              focusColor: focusColor,
-              itemHeight: itemHeight,
+              //dropdownColor: dropdownColor,
+              //focusColor: focusColor,
+              //itemHeight: itemHeight,
               selectedItemBuilder: selectedItemBuilder,
-              menuMaxHeight: menuMaxHeight,
-              borderRadius: borderRadius,
+              //menuMaxHeight: menuMaxHeight,
+              //borderRadius: borderRadius,
               enableFeedback: enableFeedback,
               alignment: alignment,
+
+              hint: const Text(
+                'Select City/ULB',
+                style: TextStyle(fontSize: 14),
+              ),
+
+              buttonStyleData: const ButtonStyleData(
+                padding: EdgeInsets.only(right: 8),
+              ),
+              iconStyleData: const IconStyleData(
+                icon: Icon(
+                  Icons.arrow_drop_down,
+                  color: Colors.black45,
+                ),
+                iconSize: 24,
+              ),
+              dropdownStyleData: DropdownStyleData(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+              menuItemStyleData: const MenuItemStyleData(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+              ),
+
             );
           },
         );
