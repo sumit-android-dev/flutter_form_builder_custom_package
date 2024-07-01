@@ -315,7 +315,7 @@ class FormBuilderTextField extends FormBuilderFieldDecoration<String> {
     this.obscureText = false,
     this.textCapitalization = TextCapitalization.none,
     this.scrollPadding = const EdgeInsets.all(20.0),
-    this.enableInteractiveSelection = true,
+    this.enableInteractiveSelection = false,
     this.maxLengthEnforcement,
     this.textAlign = TextAlign.start,
     this.autofocus = false,

@@ -151,6 +151,7 @@ class FormBuilderDropdown<T> extends FormBuilderFieldDecoration<T> {
   /// If [isExpanded] is true, the inner width is expanded to fill its
   /// surrounding container.
   final bool isExpanded;
+  final String? hint;
 
   /// If null, then the menu item heights will vary according to each menu item's
   /// intrinsic height.
@@ -238,6 +239,7 @@ class FormBuilderDropdown<T> extends FormBuilderFieldDecoration<T> {
     required this.items,
     this.isExpanded = true,
     this.isDense = true,
+    this.hint,
     this.elevation = 8,
     this.iconSize = 24.0,
     this.style,
@@ -292,8 +294,8 @@ class FormBuilderDropdown<T> extends FormBuilderFieldDecoration<T> {
               enableFeedback: enableFeedback,
               alignment: alignment,
 
-              hint: const Text(
-                'Select City/ULB',
+              hint: Text(
+                hint ?? "",
                 style: TextStyle(fontSize: 14),
               ),
 
@@ -315,7 +317,6 @@ class FormBuilderDropdown<T> extends FormBuilderFieldDecoration<T> {
               menuItemStyleData: const MenuItemStyleData(
                 padding: EdgeInsets.symmetric(horizontal: 16),
               ),
-
             );
           },
         );
