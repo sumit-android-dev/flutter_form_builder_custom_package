@@ -61,6 +61,7 @@ class _SignupFormState extends State<SignupForm> {
                       color: Colors.black,
                       fontSize: 16.0),
                   decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(vertical: 16,),
                     labelText: null,
                     hintText: "",
                     hintStyle: const TextStyle(
@@ -69,23 +70,19 @@ class _SignupFormState extends State<SignupForm> {
                     border: _border(),
                     enabledBorder: _border(),
                   ),
-                  initialValue: "Select City/ULB",
                   onChanged: (value) {
                     setState(() {});
                   },
-
                   validator: (value) {
-                    if (value == null || value == "Select City/ULB") {
+                    if (value == null) {
                       return 'Please select a city/ULB name';
                     }
                     return null;
                   },
                   items: [
-                    'Select City/ULB',
                     'Indore',
                     'Bhopal',
-                  ]
-                      .map((e) => DropdownMenuItem(
+                  ].map((e) => DropdownMenuItem(
                             value: e,
                             child: Text(e),
                           ))
