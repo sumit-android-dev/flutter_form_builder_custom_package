@@ -31,12 +31,13 @@ dependencies:
   flutter:
     sdk: flutter
   form_builder_package:
-    path: ../form_builder_custom_package/form_builder_package
+    path: ../flutter_form_builder_custom_package/form_builder_package
   form_validator: ^2.1.1
   get:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
+  dropdown_button2: ^2.3.9
 
 dev_dependencies:
   flutter_test:
