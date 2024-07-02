@@ -1,6 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../flutter_form_builder.dart';
 import '../extensions/generic_validator.dart';
@@ -177,6 +178,7 @@ class FormBuilderDropdown<T> extends FormBuilderFieldDecoration<T> {
   /// If it is not provided, the theme's [ThemeData.canvasColor] will be used
   /// instead.
   final Color? dropdownColor;
+  TextEditingController textEditingController = TextEditingController();
 
   /// The maximum height of the menu.
   ///
@@ -250,6 +252,7 @@ class FormBuilderDropdown<T> extends FormBuilderFieldDecoration<T> {
     this.onTap,
     this.autofocus = false,
     this.dropdownColor,
+    required this.textEditingController,
     this.focusColor,
     this.itemHeight,
     this.selectedItemBuilder,
@@ -263,6 +266,7 @@ class FormBuilderDropdown<T> extends FormBuilderFieldDecoration<T> {
 
             final hasValue = items.map((e) => e.value).contains(field.value);
             return DropdownButtonFormField2<T>(
+
               isExpanded: isExpanded,
               decoration: state.decoration,
               items: items,
@@ -298,7 +302,6 @@ class FormBuilderDropdown<T> extends FormBuilderFieldDecoration<T> {
                 hint ?? "",
                 style: TextStyle(fontSize: 14),
               ),
-
               buttonStyleData: const ButtonStyleData(
                 padding: EdgeInsets.only(right: 8),
               ),
@@ -313,10 +316,51 @@ class FormBuilderDropdown<T> extends FormBuilderFieldDecoration<T> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
                 ),
+                maxHeight: 240,
               ),
               menuItemStyleData: const MenuItemStyleData(
                 padding: EdgeInsets.symmetric(horizontal: 16),
               ),
+
+              dropdownSearchData: DropdownSearchData(
+                searchController: textEditingController,
+                searchInnerWidgetHeight: 50,
+                searchInnerWidget: Container(
+                  height: 50,
+                  margin: const EdgeInsets.only(
+                    top: 12,
+                    right: 8,
+                    left: 8,
+                  ),
+                  child: TextFormField(
+                    expands: false,
+                    minLines: 1,
+                    maxLines: 1,
+                    keyboardType: TextInputType.name,
+                    controller: textEditingController,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
+                      hintText: 'Search',
+                      hintStyle: const TextStyle(fontSize: 12),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+
+                  ),
+                ),
+                searchMatchFn: (item, searchValue) {
+                  return item.value.toString().toLowerCase().contains(searchValue.toLowerCase());
+                },
+              ),
+
             );
           },
         );

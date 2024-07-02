@@ -17,6 +17,7 @@ class NewConnectionFormScreen extends StatefulWidget {
 
 class _NewConnectionFormScreenState extends State<NewConnectionFormScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
+  TextEditingController textEditingController = TextEditingController();
 
   final ImagePicker _picker = ImagePicker();
   XFile? _image;
@@ -442,12 +443,74 @@ class _NewConnectionFormScreenState extends State<NewConnectionFormScreen> {
       items: [
         'Indore',
         'Bhopal',
+        'Jabalpur',
+        'Gwalior',
+        'Ujjain',
+        'Sagar',
+        'Dewas',
+        'Satna',
+        'Ratlam',
+        'Rewa',
+        'Murwara',
+        'Singrauli',
+        'Burhanpur',
+        'Khandwa',
+        'Bhind',
+        'Chhindwara',
+        'Guna',
+        'Shivpuri',
+        'Vidisha',
+        'Chhatarpur',
+        'Damoh',
+        'Mandsaur',
+        'Hoshangabad',
+        'Itarsi',
+        'Sehore',
+        'Dhar',
+        'Mhow',
+        'Betul',
+        'Neemuch',
+        'Seoni',
+        'Datia',
+        'Nagda',
+        'Sidhi',
+        'Pithampur',
+        'Sanawad',
+        'Ashoknagar',
+        'Shahdol',
+        'Ganjbasoda',
+        'Tikamgarh',
+        'Shajapur',
+        'Narsinghpur',
+        'Sarni',
+        'Barwani',
+        'Balaghat',
+        'Maihar',
+        'Mandideep',
+        'Shivpuri',
+        'Panna',
+        'Harda',
+        'Sihora',
+        'Sendhwa',
+        'Wara Seoni',
+        'Sabalgarh',
+        'Mahidpur',
+        'Sironj',
+        'Niwari',
+        'Manasa',
+        'Pipariya',
+        'Shamgarh',
+        'Thandla',
+        'Baihar',
+        'Nainpur',
+        'Barghat',
+        'Shendurjana Bazar'
       ]
           .map((e) => DropdownMenuItem(
                 value: e,
                 child: Text(e),
               ))
-          .toList(),
+          .toList(), textEditingController: textEditingController,
     );
   }
 }
