@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:form_builder_package/flutter_form_builder.dart';
 import 'package:get/get.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 class NewConnectionFormScreen extends StatefulWidget {
@@ -17,6 +20,7 @@ class _NewConnectionFormScreenState extends State<NewConnectionFormScreen> {
 
   final ImagePicker _picker = ImagePicker();
   XFile? _image;
+  CroppedFile? _croppedFile;
 
   /// Image picker
   Future<void> _pickImage() async {
@@ -25,8 +29,9 @@ class _NewConnectionFormScreenState extends State<NewConnectionFormScreen> {
       setState(() {
         _image = image;
         final imagePath = image?.path ?? "";
-        if(imagePath.isNotEmpty){
-          _formKey.currentState?.fields['id_proof']?.didChange(getFileName(imagePath, "/"));
+        if (imagePath.isNotEmpty) {
+          _formKey.currentState?.fields['id_proof']
+              ?.didChange(getFileName(imagePath, "/"));
         }
       });
     } catch (e) {
@@ -37,13 +42,16 @@ class _NewConnectionFormScreenState extends State<NewConnectionFormScreen> {
   Future<void> _pickImageFromGallery() async {
     try {
       XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-      setState(() {
+      _image = image;
+      _cropImage();
+      /*setState(() {
         _image = image;
         final imagePath = image?.path ?? "";
-        if(imagePath.isNotEmpty){
-          _formKey.currentState?.fields['id_proof']?.didChange(getFileName(imagePath, "/"));
+        if (imagePath.isNotEmpty) {
+          _formKey.currentState?.fields['id_proof']
+              ?.didChange(getFileName(imagePath, "/"));
         }
-      });
+      });*/
     } catch (e) {
       print('Error picking image: $e');
     }
@@ -55,19 +63,72 @@ class _NewConnectionFormScreenState extends State<NewConnectionFormScreen> {
     return path.substring(lastIndex + 1);
   }
 
+  Future<void> _cropImage() async {
+    if (_image != null) {
+      final croppedFile = await ImageCropper().cropImage(
+        sourcePath: _image!.path,
+        compressFormat: ImageCompressFormat.jpg,
+        compressQuality: 100,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: false,
+            aspectRatioPresets: [
+              CropAspectRatioPreset.original,
+              CropAspectRatioPreset.square,
+              CropAspectRatioPreset.ratio4x3,
+              CropAspectRatioPresetCustom(),
+            ],
+          ),
+          IOSUiSettings(
+            title: 'Cropper',
+            aspectRatioPresets: [
+              CropAspectRatioPreset.original,
+              CropAspectRatioPreset.square,
+              CropAspectRatioPreset.ratio4x3,
+              CropAspectRatioPresetCustom(),
+            ],
+          ),
+          WebUiSettings(
+            context: context,
+            presentStyle: WebPresentStyle.dialog,
+            size: const CropperSize(
+              width: 520,
+              height: 520,
+            ),
+          ),
+        ],
+      );
+      if (croppedFile != null) {
+        setState(() {
+          _croppedFile = croppedFile;
+          final imagePath = croppedFile.path ?? "";
+          if (imagePath.isNotEmpty) {
+            _formKey.currentState?.fields['id_proof']
+                ?.didChange(getFileName(imagePath, "/"));
+          }
+        });
+      }
+    }
+  }
+
   ///--------------Image Picker---------------------
 
-  void showCupertinoBottomSheet(BuildContext context) {
+  void showCupertinoBottomSheet(BuildContext context, bool isImageAvailable) {
     showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return CupertinoActionSheet(
           actions: <Widget>[
+            _buildViewImageOption(isImageAvailable),
             CupertinoActionSheetAction(
               child: const Text(
                 'Select Image from gallery',
-                style: TextStyle(
-                    color: Colors.blue, fontWeight: FontWeight.bold),
+                style:
+                    TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
               ),
               onPressed: () {
                 _pickImageFromGallery();
@@ -77,8 +138,8 @@ class _NewConnectionFormScreenState extends State<NewConnectionFormScreen> {
             CupertinoActionSheetAction(
               child: const Text(
                 'Take a photo from camera',
-                style: TextStyle(
-                    color: Colors.blue, fontWeight: FontWeight.bold),
+                style:
+                    TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
               ),
               onPressed: () {
                 _pickImage();
@@ -87,10 +148,78 @@ class _NewConnectionFormScreenState extends State<NewConnectionFormScreen> {
             ),
           ],
           cancelButton: CupertinoActionSheetAction(
-            child: const Text('Cancel'),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            ),
             onPressed: () {
               Navigator.pop(context);
             },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildViewImageOption(bool isImageAvailable) {
+    if (isImageAvailable) {
+      return CupertinoActionSheetAction(
+        child: const Text(
+          'View Image',
+          style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+        ),
+        onPressed: () {
+          Navigator.pop(context);
+          _showFullScreenDialog(context);
+        },
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+
+  void _showFullScreenDialog(BuildContext context) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: 'Full Screen Dialog',
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (context, animation1, animation2) {
+        return Material(
+          color: Colors.transparent,
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            color: Colors.white,
+            child: Column(
+              children: <Widget>[
+                AppBar(
+                  title: Text('Image Viewer'),
+                  automaticallyImplyLeading: false,
+                  actions: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: Center(
+                    child: Image.file(
+                      _croppedFile != null ? File(_croppedFile!.path) : File(''),
+                      // Providing empty path if _image is null
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 50,
+                )
+              ],
+            ),
           ),
         );
       },
@@ -179,7 +308,11 @@ class _NewConnectionFormScreenState extends State<NewConnectionFormScreen> {
                       readOnly: true,
                       decoration: _buildInputDecoration("Select image"),
                       onTap: () {
-                        showCupertinoBottomSheet(context);
+                        if (_image != null) {
+                          showCupertinoBottomSheet(context, true);
+                        } else {
+                          showCupertinoBottomSheet(context, false);
+                        }
                       },
                       validator: (value) {
                         return _validator(value);
@@ -210,6 +343,8 @@ class _NewConnectionFormScreenState extends State<NewConnectionFormScreen> {
       ),
     );
   }
+
+
 
   _border([Color color = Colors.grey]) => OutlineInputBorder(
         borderSide: BorderSide(
@@ -315,4 +450,12 @@ class _NewConnectionFormScreenState extends State<NewConnectionFormScreen> {
           .toList(),
     );
   }
+}
+
+class CropAspectRatioPresetCustom implements CropAspectRatioPresetData {
+  @override
+  (int, int)? get data => (2, 3);
+
+  @override
+  String get name => '2x3 (customized)';
 }
